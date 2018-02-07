@@ -162,7 +162,7 @@ public class GameController {
         return gameWrapper;
     }
 
-    
+
     @RequestMapping("/getChanges/{player}")
     public BoardWrapper getChanges(@PathVariable("player") Integer player) {
         BoardWrapper boardWrapper = new BoardWrapper();
@@ -172,6 +172,9 @@ public class GameController {
         boardWrapper.setSuccess(true);
         boardWrapper.setGameOver(gamePresent.getGameOver());
         boardWrapper.setWhoseTurn(gamePresent.getWhoseTurn());
+        if (gamePresent.getGameOver()) {
+            boardWrapper.setWinner(gamePresent.getWinner());
+        }
         return boardWrapper;
     }
 }

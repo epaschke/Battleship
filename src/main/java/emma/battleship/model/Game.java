@@ -14,6 +14,7 @@ public class Game {
     private Boolean player1;
     private Boolean player2;
     private Integer whoseTurn;
+    private Integer winner;
 
     public Game() {
         this.gameOver = false;
@@ -83,7 +84,10 @@ public class Game {
             }
         }
 
-        if (over1 || over2) gameOver = true;
+        if (over1 || over2) {
+            gameOver = true;
+            winner = over1 ? 2 : 1;
+        }
         return gameOver;
     }
 
@@ -151,4 +155,11 @@ public class Game {
         this.board2Player = board2Player;
     }
 
+    public Integer getWinner() {
+        return winner;
+    }
+
+    public void setWinner(Integer winner) {
+        this.winner = winner;
+    }
 }

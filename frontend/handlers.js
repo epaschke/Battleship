@@ -44,13 +44,17 @@ $(".ship-button").click(function(event){
     if (!currentShip){
       console.log(currentShip);
     } else if (!count){
-      shipLength = currentShip.split("ship")[1];
-      startId = this.id;
-      start = this.id.split("");
-      start.shift();
-      $(this).css("background-color", "orange");
-      count++;
-      $("#prompt").text("Start selected. Now select endpoint.")
+      if ($(this).css("background-color") !== "rgb(255, 165, 0)") {
+        shipLength = currentShip.split("ship")[1];
+        startId = this.id;
+        start = this.id.split("");
+        start.shift();
+        $(this).css("background-color", "orange");
+        count++;
+        $("#prompt").text("Start selected. Now select endpoint.")
+      } else {
+        $("#prompt").text("You already placed a ship there.")
+      }
     } else {
         console.log('else');
         end = this.id.split("");
@@ -68,7 +72,7 @@ $(".ship-button").click(function(event){
           data: JSON.stringify({ "shipLength": parseInt(shipLength), "start1": parseInt(start[0]), "start2": parseInt(start[1]), "end1": parseInt(end[0]), "end2": parseInt(end[1]) })
       }).done(function(resp){
         console.log(resp);
-        if (resp.success){
+        if (resp.success) {
           resp.board.map((row, rowId) => {
             row.map((cell, cellId) => {
               if (cell === shipLength) {
@@ -138,7 +142,7 @@ function getChanges() {
       })
       $("#prompt").text(`It's player ${resp.whoseTurn}'s turn!`)
       if (resp.gameOver){
-         $("#prompt").text("Game is over!");
+         $("#prompt").text(`Game is over. Player ${resp.winner} is the winner!`);
          clearInterval(interval);
        }
       }

@@ -6,6 +6,7 @@ public class BoardWrapper {
     private Integer whoseTurn;
     private String errorMessage;
     private Boolean gameOver;
+    private Integer winner;
 
     public String[][] getBoard() {
         return board;
@@ -45,5 +46,13 @@ public class BoardWrapper {
 
     public void setWhoseTurn(Integer whoseTurn) {
         this.whoseTurn = whoseTurn;
+    }
+
+    public Integer getWinner() {
+        return winner;
+    }
+
+    public void setWinner(Integer winner) {
+        this.winner = winner;
     }
 }
