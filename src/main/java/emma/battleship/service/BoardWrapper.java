@@ -3,6 +3,7 @@ package emma.battleship.service;
 public class BoardWrapper {
     private String[][] board;
     private Boolean success;
+    private Integer whoseTurn;
     private String errorMessage;
     private Boolean gameOver;
 
@@ -36,5 +37,13 @@ public class BoardWrapper {
 
     public void setGameOver(Boolean gameOver) {
         this.gameOver = gameOver;
+    }
+
+    public Integer getWhoseTurn() {
+        return whoseTurn;
+    }
+
+    public void setWhoseTurn(Integer whoseTurn) {
+        this.whoseTurn = whoseTurn;
     }
 }

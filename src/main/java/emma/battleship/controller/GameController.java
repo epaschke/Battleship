@@ -99,7 +99,6 @@ public class GameController {
         if (player == 1) {
             gamePresent.setBoard1Player(playerGame);
         } else {
-            System.out.println("setting board 2");
             gamePresent.setBoard2Player(playerGame);
         }
 
@@ -163,11 +162,7 @@ public class GameController {
         return gameWrapper;
     }
 
-    @PostMapping(value = "/testRoute", consumes = MediaType.ALL_VALUE)
-    public Game testRoute() {
-        return gamePresent;
-    }
-
+    
     @RequestMapping("/getChanges/{player}")
     public BoardWrapper getChanges(@PathVariable("player") Integer player) {
         BoardWrapper boardWrapper = new BoardWrapper();
@@ -175,8 +170,8 @@ public class GameController {
         String[][] board = player == 1 ? gamePresent.getBoard2Attack() : gamePresent.getBoard1Attack();
         boardWrapper.setBoard(board);
         boardWrapper.setSuccess(true);
-        Boolean gameOver = gamePresent.getGameOver() || gamePresent.getWhoseTurn() == 0;
-        boardWrapper.setGameOver(gameOver);
+        boardWrapper.setGameOver(gamePresent.getGameOver());
+        boardWrapper.setWhoseTurn(gamePresent.getWhoseTurn());
         return boardWrapper;
     }
 }

@@ -4,25 +4,9 @@ var count = 0;
 var StartId;
 var start;
 var shipLength;
-$(document).ready(function(){
+var interval;
 
-  $.ajax({
-    url: direct + 'testRoute',
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "cache-control": "no-cache"
-    },
-    data: JSON.stringify({
-      "x": "1"
-    })
-  })
-  .done(function(resp) {
-    console.log(resp);
-  })
-  .catch(function(error){
-    console.log(error);
-  });
+$(document).ready(function(){
 
   $("#joinGame").click(function() {
     $.ajax({url: direct + 'joinGame'})
@@ -34,6 +18,7 @@ $(document).ready(function(){
          $(".buttons").show();
          $("#board-container").show();
          $("#prompt").text("To place ships of 5 different lengths, click on a button below.");
+         interval = setInterval(getChanges, 3000);
        } else {
          $("#prompt").text(resp.errorMessage);
        }
@@ -124,7 +109,8 @@ $(".AttackBoardCell").click(function(event){
     if (resp.success){
       var color = resp.correctHit ? 'green' : 'red';
       $(_this).css("background-color", color);
-      $("#prompt").text(`You made a hit to [${x[0]}, ${x[1]}]`)
+      var text = resp.correctHit ? "Good hit!" : "Miss!";
+      $("#prompt").text(text);
       if (resp.gameOver){
         $("#prompt").text("Game is over!");
       }
@@ -135,11 +121,12 @@ $(".AttackBoardCell").click(function(event){
   })
 });
 
-$("#getChanges").click(function(event){
+function getChanges() {
   $.ajax({"url": direct + `getChanges/${$("#player").text()}`})
   .done(function(resp){
     console.log(resp);
     if (resp.success){
+      if (resp.whoseTurn !== 0) {
       resp.board.map((row, rowId) => {
         row.map((cell, cellId) => {
           if (cell === "x") {
@@ -149,16 +136,17 @@ $("#getChanges").click(function(event){
           }
         })
       })
+      $("#prompt").text(`It's player ${resp.whoseTurn}'s turn!`)
       if (resp.gameOver){
-        $("#prompt").text("Game is not ongoing!")
-      } else {
-        $("#prompt").text("Game is ongoing.")
-
+         $("#prompt").text("Game is over!");
+         clearInterval(interval);
+       }
       }
     }
   })
   .catch(function(error){
     console.log(error);
   })
-})
+}
+
 })
