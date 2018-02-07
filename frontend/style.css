@@ -4,7 +4,13 @@
   justify-content: space-around;
   padding: 20px;
 }
-
+* {
+  font-family: Helvetica;
+}
+.board-title {
+  text-align: center;
+  font-weight: bold;
+}
 #full-container {
   display: flex;
   flex-direction: column;

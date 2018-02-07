@@ -1,9 +1,10 @@
 var direct = "http://localhost:8080/"
-var currentShip = null;
-var count = 0;
-var StartId;
-var start;
-var shipLength;
+var playerId;
+var state = {
+  currentShip: null,
+  count: 0,
+  start: []
+};
 var interval;
 
 $(document).ready(function(){
@@ -12,13 +13,13 @@ $(document).ready(function(){
     $.ajax({url: direct + 'joinGame'})
      .then(function(resp){
        if (resp.success) {
-         $("#info").show();
          $("#player").text(resp.player);
+         playerId = () => $("#player").text();
+         $("#info").show();
          $("#joinGame").hide();
          $(".buttons").show();
          $("#board-container").show();
          $("#prompt").text("To place ships of 5 different lengths, click on a button below.");
-         interval = setInterval(getChanges, 3000);
        } else {
          $("#prompt").text(resp.errorMessage);
        }
@@ -30,65 +31,64 @@ $(document).ready(function(){
     .then(function(resp){
       if (resp.success) {
         $("#prompt").text("You have left the game.");
+        clearInterval(interval);
       }
     })
    })
 
 $(".ship-button").click(function(event){
   $(this).css("background-color", "red");
-  currentShip = this.id;
+  state.currentShip = this.id;
   $("#prompt").text("Select a start and end for the ship!")
+  interval = setInterval(getChanges, 3000);
 });
 
   $(".PlayerBoardCell").click( function(event){
-    if (!currentShip){
-      console.log(currentShip);
-    } else if (!count){
+    if (!state.currentShip){
+      $("#prompt").text("Select a ship!");
+    } else if (!state.count){
       if ($(this).css("background-color") !== "rgb(255, 165, 0)") {
-        shipLength = currentShip.split("ship")[1];
-        startId = this.id;
-        start = this.id.split("");
-        start.shift();
+        state.shipLength = state.currentShip.split("ship")[1];
+        state.startId = this.id;
+        state.start = this.id.split("");
+        state.start.shift();
         $(this).css("background-color", "orange");
-        count++;
+        state.count++;
         $("#prompt").text("Start selected. Now select endpoint.")
       } else {
         $("#prompt").text("You already placed a ship there.")
       }
     } else {
-        console.log('else');
-        end = this.id.split("");
+        var end = this.id.split("");
         end.shift();
         var _this = this;
         $(this).css("background-color", "orange");
-        console.log({ "shipLength": parseInt(shipLength), "start1": start[0], "start2": start[1], "end1": end[0], "end2": end[1] });
         $.ajax({
-          "url": direct + `setShip/${$("#player").text()}`,
+          "url": direct + `setShip/${playerId()}`,
           method: 'POST',
           headers: {
             "content-type": "application/json",
             "cache-control": "no-cache"
           },
-          data: JSON.stringify({ "shipLength": parseInt(shipLength), "start1": parseInt(start[0]), "start2": parseInt(start[1]), "end1": parseInt(end[0]), "end2": parseInt(end[1]) })
+          data: JSON.stringify({ "shipLength": parseInt(state.shipLength), "start1": parseInt(state.start[0]), "start2": parseInt(state.start[1]), "end1": parseInt(end[0]), "end2": parseInt(end[1]) })
       }).done(function(resp){
-        console.log(resp);
         if (resp.success) {
           resp.board.map((row, rowId) => {
             row.map((cell, cellId) => {
-              if (cell === shipLength) {
+              if (cell === state.shipLength) {
                 $(`#p${rowId}${cellId}`).css("background-color", "orange");
               }
             })
           })
           $("#prompt").text("Ship was placed!")
         } else {
-          $(`#${startId}`).css("background-color", "white");
+          $(`#${state.startId}`).css("background-color", "white");
           $(_this).css("background-color", "white");
-          $(`#${currentShip}`).css("background-color", "white");
+          $(`#${state.currentShip}`).css("background-color", "white");
           $("#prompt").text(resp.errorMessage);
         }
-        currentShip = null;
-        count = 0;
+        state.currentShip = null;
+        state.count = 0;
       })
       .catch(function(error){
         console.log(error);
@@ -101,7 +101,7 @@ $(".AttackBoardCell").click(function(event){
     var x = this.id.split("");
     var _this = this;
   $.ajax({
-      "url": direct + `move/${$("#player").text()}`,
+      "url": direct + `move/${playerId()}`,
       method: 'POST',
       headers: {
         "content-type": "application/json",
@@ -115,9 +115,6 @@ $(".AttackBoardCell").click(function(event){
       $(_this).css("background-color", color);
       var text = resp.correctHit ? "Good hit!" : "Miss!";
       $("#prompt").text(text);
-      if (resp.gameOver){
-        $("#prompt").text("Game is over!");
-      }
     }
   })
   .catch(function(error){
@@ -126,9 +123,8 @@ $(".AttackBoardCell").click(function(event){
 });
 
 function getChanges() {
-  $.ajax({"url": direct + `getChanges/${$("#player").text()}`})
+  $.ajax({"url": direct + `getChanges/${playerId()}`})
   .done(function(resp){
-    console.log(resp);
     if (resp.success){
       if (resp.whoseTurn !== 0) {
       resp.board.map((row, rowId) => {
@@ -140,9 +136,9 @@ function getChanges() {
           }
         })
       })
-      $("#prompt").text(`It's player ${resp.whoseTurn}'s turn!`)
+      $("#prompt").text(`It's ${resp.whoseTurn === playerId() ? "your" : "their"} turn!`)
       if (resp.gameOver){
-         $("#prompt").text(`Game is over. Player ${resp.winner} is the winner!`);
+         $("#prompt").text(`Game is over. ${resp.winner === playerId() ? "You won!" : "You lost!"}`);
          clearInterval(interval);
        }
       }
