@@ -96,11 +96,8 @@ public class GameController {
             return boardWrapper;
         }
 
-        if (player == 1) {
-            gamePresent.setBoard1Player(playerGame);
-        } else {
-            gamePresent.setBoard2Player(playerGame);
-        }
+        if (player == 1) gamePresent.setBoard1Player(playerGame);
+        else gamePresent.setBoard2Player(playerGame);
 
         boardWrapper.setSuccess(true);
         gamePresent.checkStartValid();

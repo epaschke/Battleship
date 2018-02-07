@@ -10,21 +10,18 @@ public class Ship {
 
     public Boolean checkValid(String[][] board) {
         if (start1 > 9 || start2 > 9 || end1 > 9 || end2 > 9){
-            System.out.println("off board");
             return false;
         }
 
         for (String[] row : board) {
             for (String cell : row) {
                 if (cell.equals(shipLength.toString())) {
-                    System.out.println("Ship already placed");
                     return false;
                 }
             }
         }
 
         if (start1 != end1 && start2 != end2) {
-            System.out.println("not in a row");
             return false;
         }
         if ((start1 - end1 + start2 - end2) != shipLength - 1 &&
@@ -33,6 +30,7 @@ public class Ship {
         }
         return true;
     }
+
 
     public Integer getShipLength() {
         return shipLength;
