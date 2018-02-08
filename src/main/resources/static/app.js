@@ -14,12 +14,13 @@ $(document).ready(function(){
      .then(function(resp){
        if (resp.success) {
          $("#player").text(resp.player);
-         playerId = () => $("#player").text();
+         playerId = () => parseInt($("#player").text());
          $("#info").show();
          $("#joinGame").hide();
          $(".buttons").show();
          $("#board-container").show();
          $("#prompt").text("To place ships of 5 different lengths, click on a button below.");
+         interval = setInterval(getChanges, 3000);
        } else {
          $("#prompt").text(resp.errorMessage);
        }
@@ -40,7 +41,6 @@ $(".ship-button").click(function(event){
   $(this).css("background-color", "red");
   state.currentShip = this.id;
   $("#prompt").text("Select a start and end for the ship!")
-  interval = setInterval(getChanges, 3000);
 });
 
   $(".PlayerBoardCell").click( function(event){
@@ -136,7 +136,7 @@ function getChanges() {
           }
         })
       })
-      $("#prompt").text(`It's ${resp.whoseTurn === playerId() ? "your" : "their"} turn!`)
+      $("#prompt").text(`It's ${resp.whoseTurn === playerId() ? "your turn. Click anywhere on the attack board." : "their turn!"}`)
       if (resp.gameOver){
          $("#prompt").text(`Game is over. ${resp.winner === playerId() ? "You won!" : "You lost!"}`);
          clearInterval(interval);
