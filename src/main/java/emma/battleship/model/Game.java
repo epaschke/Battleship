@@ -1,15 +1,22 @@
 package emma.battleship.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+@Entity
 public class Game {
 
-    private String[][] board1Attack = new String[10][10];
-    private String[][] board1Player = new String[10][10];
-    private String[][] board2Attack = new String[10][10];;
-    private String[][] board2Player = new String[10][10];;
+    @Id
+    @GeneratedValue
+    private Integer id;
+    private Board board1Attack;
+    private Board board1Player;
+    private Board board2Attack;;
+    private Board board2Player;;
     private Boolean gameOver;
     private Boolean player1;
     private Boolean player2;
@@ -18,10 +25,6 @@ public class Game {
 
     public Game() {
         this.gameOver = false;
-        for (String[] row : board1Attack) Arrays.fill(row, ".");
-        for (String[] row : board2Attack) Arrays.fill(row, ".");
-        for (String[] row : board1Player) Arrays.fill(row, ".");
-        for (String[] row : board2Player) Arrays.fill(row, ".");
         this.player1 = false;
         this.player2 = false;
         this.whoseTurn = 0;
@@ -33,7 +36,8 @@ public class Game {
         Boolean valid = true;
 
         if (whoseTurn == 0) {
-            for (String[] row : board1Player) {
+            for (int i = 0; i < 10; i++) {
+                String[] row = getBoard1Player();
                 for (String cell : row) {
                     if (!cell.equals(".")) {
                         if (!hash1.containsKey(cell)) hash1.put(cell, 0);
@@ -87,19 +91,27 @@ public class Game {
         return gameOver;
     }
 
-    public String[][] getBoard1Attack() {
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Board getBoard1Attack() {
         return board1Attack;
     }
 
-    public void setBoard1Attack(String[][] board1Attack) {
+    public void setBoard1Attack(Board board1Attack) {
         this.board1Attack = board1Attack;
     }
 
-    public String[][] getBoard2Attack() {
+    public Board getBoard2Attack() {
         return board2Attack;
     }
 
-    public void setBoard2Attack(String[][] board2Attack) {
+    public void setBoard2Attack(Board board2Attack) {
         this.board2Attack = board2Attack;
     }
 
@@ -135,19 +147,19 @@ public class Game {
         this.whoseTurn = whoseTurn;
     }
 
-    public String[][] getBoard1Player() {
+    public Board getBoard1Player() {
         return board1Player;
     }
 
-    public void setBoard1Player(String[][] board1Player) {
+    public void setBoard1Player(Board board1Player) {
         this.board1Player = board1Player;
     }
 
-    public String[][] getBoard2Player() {
+    public Board getBoard2Player() {
         return board2Player;
     }
 
-    public void setBoard2Player(String[][] board2Player) {
+    public void setBoard2Player(Board board2Player) {
         this.board2Player = board2Player;
     }
 
