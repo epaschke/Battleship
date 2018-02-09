@@ -3,9 +3,7 @@ package emma.battleship.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Move {
-    @JsonProperty("row")
     private Integer row;
-    @JsonProperty("column")
     private Integer column;
 
     public Boolean checkValid(String[][] board) {

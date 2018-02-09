@@ -1,5 +1,6 @@
 package emma.battleship.controller;
 
+import emma.battleship.dao.GameDao;
 import emma.battleship.service.BoardWrapper;
 import emma.battleship.model.Move;
 import emma.battleship.model.Ship;
@@ -15,16 +16,17 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 public class GameController {
-    private Game gamePresent;
+    private GameDao gameDao;
 
     @Autowired
-    public GameController() {
-        this.gamePresent = new Game();
+    public GameController(GameDao gameDao) {
+        this.gameDao = gameDao;
     }
 
     @RequestMapping("/joinGame")
     public GameWrapper joinGame(){
         GameWrapper gameWrapper = new GameWrapper();
+
 
         if (!gamePresent.getPlayer1()) {
             gameWrapper.setPlayer(1);

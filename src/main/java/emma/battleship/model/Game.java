@@ -6,10 +6,10 @@ import java.util.Map;
 
 public class Game {
 
-    private String[][] board1Attack;
-    private String[][] board1Player;
-    private String[][] board2Attack;
-    private String[][] board2Player;
+    private String[][] board1Attack = new String[10][10];
+    private String[][] board1Player = new String[10][10];
+    private String[][] board2Attack = new String[10][10];;
+    private String[][] board2Player = new String[10][10];;
     private Boolean gameOver;
     private Boolean player1;
     private Boolean player2;
@@ -18,13 +18,9 @@ public class Game {
 
     public Game() {
         this.gameOver = false;
-        this.board1Attack = new String[10][10];
         for (String[] row : board1Attack) Arrays.fill(row, ".");
-        this.board2Attack = new String[10][10];
         for (String[] row : board2Attack) Arrays.fill(row, ".");
-        this.board1Player = new String[10][10];
         for (String[] row : board1Player) Arrays.fill(row, ".");
-        this.board2Player = new String[10][10];
         for (String[] row : board2Player) Arrays.fill(row, ".");
         this.player1 = false;
         this.player2 = false;
