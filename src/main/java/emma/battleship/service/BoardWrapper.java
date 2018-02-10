@@ -1,18 +1,20 @@
 package emma.battleship.service;
 
+import emma.battleship.model.Board;
+
 public class BoardWrapper {
-    private String[][] board;
+    private Board board;
     private Boolean success;
     private Integer whoseTurn;
     private String errorMessage;
     private Boolean gameOver;
     private Integer winner;
 
-    public String[][] getBoard() {
+    public Board getBoard() {
         return board;
     }
 
-    public void setBoard(String[][] board) {
+    public void setBoard(Board board) {
         this.board = board;
     }
 

@@ -6,12 +6,12 @@ public class Move {
     private Integer row;
     private Integer column;
 
-    public Boolean checkValid(String[][] board) {
+    public Boolean checkValid(Board board) {
         if (row > 9 || column > 9) {
             return false;
         }
 
-        if (! board[row][column].equals(".")){
+        if (! board.get(row)[column].equals(".")){
             return false;
         }
 

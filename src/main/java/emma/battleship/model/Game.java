@@ -1,8 +1,8 @@
 package emma.battleship.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import javax.persistence.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,10 +13,14 @@ public class Game {
     @Id
     @GeneratedValue
     private Integer id;
+    @ManyToOne
     private Board board1Attack;
+    @ManyToOne
     private Board board1Player;
+    @ManyToOne
     private Board board2Attack;;
-    private Board board2Player;;
+    @ManyToOne
+    private Board board2Player;
     private Boolean gameOver;
     private Boolean player1;
     private Boolean player2;
@@ -37,7 +41,7 @@ public class Game {
 
         if (whoseTurn == 0) {
             for (int i = 0; i < 10; i++) {
-                String[] row = getBoard1Player();
+                String[] row = board1Player.get(i);
                 for (String cell : row) {
                     if (!cell.equals(".")) {
                         if (!hash1.containsKey(cell)) hash1.put(cell, 0);
@@ -46,7 +50,8 @@ public class Game {
                 }
             }
 
-            for (String[] row : board2Player) {
+            for (int i = 0; i < 10; i++) {
+                String[] row = board2Player.get(i);
                 for (String cell : row) {
                     if (!cell.equals(".")) {
                         if (!hash2.containsKey(cell)) hash2.put(cell, 0);
@@ -71,13 +76,15 @@ public class Game {
     public Boolean checkEndGame() {
         boolean over1 = true;
         boolean over2 = true;
-        for (String[] row : board1Player) {
+        for (int i = 0; i < 10; i++) {
+            String[] row = board1Player.get(i);
             for (String cell : row) {
                 if (!cell.equals(".") && !cell.equals("o") && !cell.equals("x")) over1 = false;
             }
         }
 
-        for (String[] row : board2Player) {
+        for (int i = 0; i < 10; i++) {
+            String[] row = board2Player.get(i);
             for (String cell : row) {
                 if (!cell.equals(".") && !cell.equals("o") && !cell.equals("x")) over2 = false;
 
