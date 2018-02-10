@@ -3,7 +3,8 @@ var playerId;
 var state = {
   currentShip: null,
   count: 0,
-  start: []
+  start: [],
+  end: []
 };
 var interval;
 
@@ -59,8 +60,8 @@ $(".ship-button").click(function(event){
         $("#prompt").text("You already placed a ship there.")
       }
     } else {
-        var end = this.id.split("");
-        end.shift();
+        state.end = this.id.split("");
+        state.end.shift();
         var _this = this;
         $(this).css("background-color", "orange");
         $.ajax({
@@ -70,16 +71,23 @@ $(".ship-button").click(function(event){
             "content-type": "application/json",
             "cache-control": "no-cache"
           },
-          data: JSON.stringify({ "shipLength": parseInt(state.shipLength), "start1": parseInt(state.start[0]), "start2": parseInt(state.start[1]), "end1": parseInt(end[0]), "end2": parseInt(end[1]) })
+          data: JSON.stringify({ "shipLength": parseInt(state.shipLength), "start1": parseInt(state.start[0]), "start2": parseInt(state.start[1]), "end1": parseInt(state.end[0]), "end2": parseInt(state.end[1]) })
       }).done(function(resp){
         if (resp.success) {
-          resp.board.map((row, rowId) => {
-            row.map((cell, cellId) => {
-              if (cell === state.shipLength) {
-                $(`#p${rowId}${cellId}`).css("background-color", "orange");
-              }
-            })
-          })
+          console.log(resp);
+            if (state.start[0] === state.end[0]){ //row are same
+                let lesser = state.start[1] > state.end[1] ? state.end[1] : state.start[1];
+                let greater = state.start[1] < state.end[1] ? state.end[1] : state.start[1];
+                for (let i = lesser; i < greater; i++){
+                    $(`#p${state.start[0]}${i}`).css("background-color", "orange");
+                }
+            } else {
+                let lesser = state.start[0] > state.end[0] ? state.end[0] : state.start[0];
+                let greater = state.start[0] < state.end[0] ? state.end[0] : state.start[0];
+                for (let i = lesser; i < greater; i++){
+                    $(`#p${i}${state.start[1]}`).css("background-color", "orange");
+                }
+            }
           $("#prompt").text("Ship was placed!")
         } else {
           $(`#${state.startId}`).css("background-color", "white");
@@ -127,15 +135,16 @@ function getChanges() {
   .done(function(resp){
     if (resp.success){
       if (resp.whoseTurn !== 0) {
-      resp.board.map((row, rowId) => {
-        row.map((cell, cellId) => {
-          if (cell === "x") {
-            $(`#p${rowId}${cellId}`).css("background-color", "green");
-          } else if (cell == "o") {
-            $(`#p${rowId}${cellId}`).css("background-color", "lightgray");
-          }
+
+      for (let rowId = 0; rowId < 10; rowId++){
+        resp.board[`r${rowId}`].map((cell, cellId) => {
+              if (cell === "x") {
+                $(`#p${rowId}${cellId}`).css("background-color", "green");
+              } else if (cell === "o") {
+                $(`#p${rowId}${cellId}`).css("background-color", "lightgray");
+              }
         })
-      })
+      }
       $("#prompt").text(`It's ${resp.whoseTurn === playerId() ? "your turn. Click anywhere on the attack board." : "their turn!"}`)
       if (resp.gameOver){
          $("#prompt").text(`Game is over. ${resp.winner === playerId() ? "You won!" : "You lost!"}`);

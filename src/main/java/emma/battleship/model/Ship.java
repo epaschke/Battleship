@@ -8,12 +8,13 @@ public class Ship {
     private Integer end2;
     private Integer shipLength;
 
-    public Boolean checkValid(String[][] board) {
+    public Boolean checkValid(Board board) {
         if (start1 > 9 || start2 > 9 || end1 > 9 || end2 > 9){
             return false;
         }
 
-        for (String[] row : board) {
+        for (int i = 0; i < 10; i++) {
+            String[] row = board.get(i);
             for (String cell : row) {
                 if (cell.equals(shipLength.toString())) {
                     return false;
