@@ -1,9 +1,6 @@
 package emma.battleship.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import javax.persistence.*;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +31,7 @@ public class Game {
         this.whoseTurn = 0;
     }
 
+    //check if both boards are full with all ships
     public Boolean checkStartValid() {
         Map<String, Integer> hash1 = new HashMap<>();
         Map<String, Integer> hash2 = new HashMap<>();
@@ -41,18 +39,19 @@ public class Game {
 
         if (whoseTurn == 0) {
             for (int i = 0; i < 10; i++) {
-                String[] row = board1Player.get(i);
-                for (String cell : row) {
+
+                //player 1 board hash table
+                String[] row1 = board1Player.get(i);
+                for (String cell : row1) {
                     if (!cell.equals(".")) {
                         if (!hash1.containsKey(cell)) hash1.put(cell, 0);
                         hash1.put(cell, hash1.get(cell) + 1);
                     }
                 }
-            }
 
-            for (int i = 0; i < 10; i++) {
-                String[] row = board2Player.get(i);
-                for (String cell : row) {
+                //player 2 board hash table
+                String[] row2 = board2Player.get(i);
+                for (String cell : row2) {
                     if (!cell.equals(".")) {
                         if (!hash2.containsKey(cell)) hash2.put(cell, 0);
                         hash2.put(cell, hash2.get(cell) + 1);
@@ -60,6 +59,7 @@ public class Game {
                 }
             }
 
+            //check both hash tables
             for (int i = 1; i <= 5; i++){
                 if (!hash1.containsKey(Integer.toString(i))) valid = false;
                 else if (hash1.get(Integer.toString(i)) != i) valid = false;
@@ -67,30 +67,34 @@ public class Game {
                 if (!hash2.containsKey(Integer.toString(i))) valid = false;
                 else if (hash2.get(Integer.toString(i)) != i) valid = false;
             }
+
+            //if no discrepancy was found, allow player 1 to go first
             if (valid) this.whoseTurn = 1;
         }
 
         return valid;
     }
 
+    //check if game is over
     public Boolean checkEndGame() {
         boolean over1 = true;
         boolean over2 = true;
+        //loop over boards and check for ships
         for (int i = 0; i < 10; i++) {
-            String[] row = board1Player.get(i);
-            for (String cell : row) {
+            //player 1 board
+            String[] row1 = board1Player.get(i);
+            for (String cell : row1) {
                 if (!cell.equals(".") && !cell.equals("o") && !cell.equals("x")) over1 = false;
             }
-        }
-
-        for (int i = 0; i < 10; i++) {
-            String[] row = board2Player.get(i);
-            for (String cell : row) {
+            //player 2 board
+            String[] row2 = board2Player.get(i);
+            for (String cell : row2) {
                 if (!cell.equals(".") && !cell.equals("o") && !cell.equals("x")) over2 = false;
 
             }
         }
 
+        //if either player's board did not find an un-guessed ship
         if (over1 || over2) {
             gameOver = true;
             winner = over1 ? 2 : 1;
@@ -98,6 +102,7 @@ public class Game {
         return gameOver;
     }
 
+    //getters and setters
     public Integer getId() {
         return id;
     }
