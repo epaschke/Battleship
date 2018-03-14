@@ -9,7 +9,7 @@ Frontend: Plain JS/HTML/CSS with jQuery
 Backend: Java, Spring Boot, JPAA/Hibernate, and Postgres
 
 ## Project Layout
-Frontend code can be found in the [resources/static](src/main/resources/static) folder. Backend routes are defined in the [controller](src/main/java/emma/battleship/controller) folder and schema definitions are in the [model] (src/main/java/emma/battleship/model) folder.
+Frontend code can be found in the [resources/static](src/main/resources/static) folder. Backend routes are defined in the [controller](src/main/java/emma/battleship/controller) folder and schema definitions are in the [model](src/main/java/emma/battleship/model) folder.
 
 ![placing_ships](placing_ships.png)
 Players can click beginning and end points of ships to place them.
