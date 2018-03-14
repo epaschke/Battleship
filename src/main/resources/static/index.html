@@ -10,29 +10,28 @@
 </head>
 <body>
 <div id="full-container">
-    <div id="prompt" style="text-align: center"></div>
-    <button id="joinGame">Join Game</button>
+    <div id="prompt" style="text-align: center; display: none; border: 2px dotted black; padding: 10px;"></div>
+    <div class="each-button" id="joinGame">JOIN GAME</div>
     <div id="info" style="display: none">
         <h1 style="display: flex">
             <div>YOU ARE PLAYER #</div>
             <div id="player"></div>
         </h1>
-
+        <div class="each-button" id="leaveGame">EXIT</div>
     </div>
     <div class="buttons" style="display: none">
-        <button id="leaveGame">Leave Game</button>
         <div id="inputs">
-            <div id="ship1" class="ship-button">Ship 1</div>
-            <div id="ship2" class="ship-button">Ship 2</div>
-            <div id="ship3" class="ship-button">Ship 3</div>
-            <div id="ship4" class="ship-button">Ship 4</div>
-            <div id="ship5" class="ship-button">Ship 5</div>
+            <div id="ship1" class="ship-button">SHIP 1</div>
+            <div id="ship2" class="ship-button">SHIP 2</div>
+            <div id="ship3" class="ship-button">SHIP 3</div>
+            <div id="ship4" class="ship-button">SHIP 4</div>
+            <div id="ship5" class="ship-button">SHIP 5</div>
         </div>
     </div>
 
     <div id="board-container"  style="display: none" >
         <div class="full-board-container">
-            <div class="board-title">Your Board</div>
+            <div class="board-title">YOUR BOARD</div>
             <div id="playerBoard" class="board">
                 <div id="playerBoardLabels">
                     <div class="board-label">A</div>
@@ -179,7 +178,7 @@
             </div>
         </div>
         <div class="full-board-container">
-            <div class="board-title">Attack Board</div>
+            <div class="board-title">ATTACK BOARD</div>
             <div id="attackBoard" class="board">
                 <div id="attackBoardLabels">
                     <div class="board-label">A</div>

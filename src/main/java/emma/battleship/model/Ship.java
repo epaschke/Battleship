@@ -8,6 +8,7 @@ public class Ship {
     private Integer end2;
     private Integer shipLength;
 
+    //checks if ship is within board and ship has not already been placed
     public Boolean checkValid(Board board) {
         if (start1 > 9 || start2 > 9 || end1 > 9 || end2 > 9){
             return false;

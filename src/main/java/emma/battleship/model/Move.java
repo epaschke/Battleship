@@ -1,36 +1,21 @@
 package emma.battleship.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class Move {
     private Integer row;
     private Integer column;
 
+    //checks if move is within board and is an open square
     public Boolean checkValid(Board board) {
-        if (row > 9 || column > 9) {
-            return false;
-        }
-
-        if (! board.get(row)[column].equals(".")){
-            return false;
-        }
-
-        return true;
+        return row > 9 || column > 9 || !board.get(row)[column].equals(".");
     }
 
+    //getters and setters
     public Integer getRow() {
         return row;
-    }
-
-    public void setRow(Integer row) {
-        this.row = row;
     }
 
     public Integer getColumn() {
         return column;
     }
 
-    public void setColumn(Integer column) {
-        this.column = column;
-    }
 }
