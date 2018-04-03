@@ -30,7 +30,7 @@ $(document).ready(function(){
         for (let i = 0; i < 10; i++){
           for (let j = 0; j < 10; j++){
             $(`#playerBoard${i}`).append(`<div id="p${i}${j}" class="PlayerBoardCell water"></div>`);
-            $(`#attackBoard${i}`).append(`<div id="p${i}${j}" class="AttackBoardCell water"></div>`);
+            $(`#attackBoard${i}`).append(`<div id="a${i}${j}" class="AttackBoardCell water"></div>`);
           }
         }
          // interval is set to ping backend for changes every 3 seconds to update game board
