@@ -14,7 +14,7 @@ Frontend code can be found in the [resources/static](src/main/resources/static) 
 ![placing_ships](placing_ships.png)
 Players can click beginning and end points of ships to place them.
 
-![mid_game](mid_game_their_turn.png)
+![mid_game](mid_game_your_turn.png)
 Players take turns making moves. The player board lights up with your opponent's correct and incorrect hits, and the attack board can be clicked to make moves.
 
 ## Future Work
