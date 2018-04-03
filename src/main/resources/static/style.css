@@ -5,31 +5,52 @@
   padding: 20px;
 }
 
+h1 {
+  color: #4a565d;
+}
+
 * {
   font-family: Helvetica;
 }
 
-.info {
+#info {
   display: flex;
   padding: 5px;
+  justify-content: space-between;
+}
+
+#prompt {
+  text-align: center;
+  display: none;
+  padding: 10px;
+  background-color: #eceff1;
+  color: #4a565d;
 }
 
 .board-title {
   text-align: center;
   font-weight: bold;
   padding: 15px;
+  color: #4a565d;
 }
 
 #leaveGame {
-  border: 2px groove black;
   margin-left: 25px;
-  border-radius: 10px;
-  padding: 5px;
+  padding: 10px;
+  background-color: #af5050;
+  color: white;
 }
 
 .each-button {
   text-align: center;
   align-self: center;
+  background-color: #dee6ea;
+  color: #4a565d;
+}
+
+.ship-button {
+  background-color: #dee6ea;
+  color: #4a565d;
 }
 
 #full-container {
@@ -42,9 +63,14 @@
 
 .ship-button, .each-button {
   cursor: pointer;
-  border: 6px double black;
   margin: 5px;
-  padding: 10px;
+  padding: 15px;
+  border-radius: 15px;
+}
+
+.ship-button.selected {
+  background-color: #4a565d;
+  color: #dee6ea;
 }
 
 #inputs {
@@ -62,17 +88,41 @@
 }
 
 .PlayerBoardCell, .AttackBoardCell {
-  border: 1px solid black;
-  padding: 15px;
+  margin: 2px;
+  margin-top: 3px;
   cursor: pointer;
-
+  height: 35px;
+  width: 35px;
 }
+
 
 .label {
   text-align: center;
 }
 
 .board-label {
-  margin-top: 2px;
-  padding: 7px;
+  margin-top: 8px;
+  padding-top: 8px;
+  padding-right: 8px;
+  padding-bottom: 4px;
+}
+
+.water {
+  background-color: #b2dbef;
+}
+
+.ship {
+  background-color: #607d8b;
+}
+
+.hit {
+  background-color: #568e56;
+}
+
+.oppHit {
+  background-color: #a9473f;
+}
+
+.miss, .oppMiss {
+  background-color: #dfe6eb;
 }

@@ -174,8 +174,10 @@ public class GameController {
             Board playerAttack = player == 1 ? gamePresent.getBoard1Attack() : gamePresent.getBoard2Attack();
             Board opponentBoard = player == 1 ? gamePresent.getBoard2Player() : gamePresent.getBoard1Player();
 
+            System.out.println(move.getColumn() + " " + move.getRow());
+
             //if move is off board or in a place that's already been guessed
-            if (!move.checkValid(playerAttack)) {
+            if (move.checkValid(playerAttack)) {
                 moveWrapper.setSuccess(false);
                 moveWrapper.setErrorMessage("Invalid move.");
                 return moveWrapper;
@@ -201,6 +203,7 @@ public class GameController {
                 playerAttack.set(row, playerRow);
                 moveWrapper.setCorrectHit(true);
             }
+
 
             boardDao.save(playerAttack);
             boardDao.save(opponentBoard);
