@@ -33,55 +33,48 @@ public class GameController {
     public GameWrapper joinGame(){
         GameWrapper gameWrapper = new GameWrapper();
         List<Game> games = gameDao.findAll();
-        switch(games.size()){
-            //if there is a game in the database
-            case 1:
-                Game gamePresent = games.get(0);
-                if (gamePresent.getPlayer1() && gamePresent.getPlayer2()){
-                    gameWrapper.setSuccess(false);
-                    gameWrapper.setErrorMessage("Game full.");
-                } else if (!gamePresent.getPlayer2()){
-                    gamePresent.setPlayer2(true);
-                    gameDao.save(gamePresent);
 
-                    gameWrapper.setPlayer(2);
-                    gameWrapper.setSuccess(true);
-                }
-                break;
-            //if there are no games in the database
-            case 0:
-                Game newGame = new Game();
-                newGame.setPlayer1(true);
-                newGame.setBoard1Player(boardDao.save(new Board()));
-                newGame.setBoard2Player(boardDao.save(new Board()));
-                newGame.setBoard1Attack(boardDao.save(new Board()));
-                newGame.setBoard2Attack(boardDao.save(new Board()));
-                gameDao.save(newGame);
+        //find existing game with only one player
+        for (Game g : games){
+            //if found, return gameWrapper
+            if (g.getPlayer1() && ! g.getPlayer2()){
+                g.setPlayer2(true);
+                gameDao.save(g);
 
-                gameWrapper.setPlayer(1);
+                gameWrapper.setPlayer(2);
+                gameWrapper.setGame(g.getId());
                 gameWrapper.setSuccess(true);
-                break;
-            //if there is an error and there is more than 1 game in the database
-            default:
-                for (Game g : games){
-                    gameDao.delete(g.getId());
-                }
-                gameWrapper.setSuccess(false);
-                gameWrapper.setErrorMessage("Game has been cleared. Try again.");
+                return gameWrapper;
+            }
         }
+
+        // continue to creation as player 1 if not found
+        Game newGame = new Game();
+        newGame.setPlayer1(true);
+        newGame.setBoard1Player(boardDao.save(new Board()));
+        newGame.setBoard2Player(boardDao.save(new Board()));
+        newGame.setBoard1Attack(boardDao.save(new Board()));
+        newGame.setBoard2Attack(boardDao.save(new Board()));
+        gameDao.save(newGame);
+
+        gameWrapper.setPlayer(1);
+        gameWrapper.setGame(newGame.getId());
+        gameWrapper.setSuccess(true);
+
         return gameWrapper;
     }
 
     //player requests to set ship with player number in params & class Ship in body
-    @PostMapping(value = "/setShip/{player}", consumes = MediaType.ALL_VALUE)
+    @PostMapping(value = "/setShip/{player}/{game}", consumes = MediaType.ALL_VALUE)
     public BoardWrapper setShip(@RequestBody Ship ship,
-                               @PathVariable("player") Integer player) {
+                                @PathVariable("player") Integer player,
+                                @PathVariable("game") Integer game) {
         //convert Ship class to integer array
         Integer[] start = new Integer[] { ship.getStart1(), ship.getStart2() };
         Integer[] end = new Integer[] { ship.getEnd1(), ship.getEnd2() };
         BoardWrapper boardWrapper = new BoardWrapper();
         try {
-            Game gamePresent = gameDao.findById(1);
+            Game gamePresent = gameDao.findById(game);
             //assign player's board based on player number sent
             Board playerGame = player == 1 ? gamePresent.getBoard1Player() : gamePresent.getBoard2Player();
 
@@ -146,11 +139,12 @@ public class GameController {
     }
 
     //player requests a move with player number in params and class Move in body
-    @PostMapping(value = "/move/{player}", consumes = MediaType.ALL_VALUE)
+    @PostMapping(value = "/move/{player}/{game}", consumes = MediaType.ALL_VALUE)
     public MoveWrapper move(@PathVariable("player") Integer player,
+                            @PathVariable("game") Integer game,
                             @RequestBody Move move) {
         MoveWrapper moveWrapper = new MoveWrapper();
-        Game gamePresent = gameDao.findById(1);
+        Game gamePresent = gameDao.findById(game);
         try {
             //if game is over
             if (gamePresent.getGameOver()) {
@@ -171,10 +165,14 @@ public class GameController {
                 return moveWrapper;
             }
 
+            if (move.getRow() == null || move.getColumn() == null){
+                moveWrapper.setErrorMessage("That's not a square.");
+                moveWrapper.setSuccess(false);
+                return moveWrapper;
+            }
+
             Board playerAttack = player == 1 ? gamePresent.getBoard1Attack() : gamePresent.getBoard2Attack();
             Board opponentBoard = player == 1 ? gamePresent.getBoard2Player() : gamePresent.getBoard1Player();
-
-            System.out.println(move.getColumn() + " " + move.getRow());
 
             //if move is off board or in a place that's already been guessed
             if (move.checkValid(playerAttack)) {
@@ -224,12 +222,12 @@ public class GameController {
     }
 
     //player requests to leave game
-    @RequestMapping("/leaveGame")
-    public GameWrapper leaveGame() {
+    @RequestMapping("/leaveGame/{game}")
+    public GameWrapper leaveGame(@PathVariable("game") Integer game) {
         GameWrapper gameWrapper = new GameWrapper();
         try {
             //remove the game from the database
-            gameDao.delete(1);
+            gameDao.delete(game);
             gameWrapper.setSuccess(true);
         }
         catch(Exception e){
@@ -239,11 +237,12 @@ public class GameController {
     }
 
     //returns player's board, takes player number as param
-    @RequestMapping("/getChanges/{player}")
-    public BoardWrapper getChanges(@PathVariable("player") Integer player) {
+    @RequestMapping("/getChanges/{player}/{game}")
+    public BoardWrapper getChanges(@PathVariable("player") Integer player,
+                                   @PathVariable("game") Integer game) {
         BoardWrapper boardWrapper = new BoardWrapper();
         try {
-            Game gamePresent = gameDao.findById(1);
+            Game gamePresent = gameDao.findById(game);
             Board board = player == 1 ? gamePresent.getBoard2Attack() : gamePresent.getBoard1Attack();
             boardWrapper.setBoard(board);
             boardWrapper.setSuccess(true);
