@@ -6,7 +6,7 @@ This is a web-based multiplayer implementation of the game Battleship.
 ## Stack/Architecture
 Frontend: Plain JS/HTML/CSS with jQuery
 
-Backend: Java, Spring Boot, JPAA/Hibernate, and Postgres
+Backend: Java, Spring Boot, JPA/Hibernate, and Postgres
 
 ## Project Layout
 Frontend code can be found in the [resources/static](src/main/resources/static) folder. Backend routes are defined in the [controller](src/main/java/emma/battleship/controller) folder and schema definitions are in the [model](src/main/java/emma/battleship/model) folder.
