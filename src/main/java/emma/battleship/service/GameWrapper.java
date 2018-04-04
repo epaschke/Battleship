@@ -5,6 +5,7 @@ import emma.battleship.model.Game;
 public class GameWrapper {
     private Boolean start;
     private Integer player;
+    private Integer game;
     private Boolean success;
     private String errorMessage;
 
@@ -38,5 +39,13 @@ public class GameWrapper {
 
     public void setPlayer(Integer player) {
         this.player = player;
+    }
+
+    public Integer getGame() {
+        return game;
+    }
+
+    public void setGame(Integer game) {
+        this.game = game;
     }
 }

@@ -1,12 +1,8 @@
 const direct = "http://localhost:8080/"
-const state = {
-  currentShip: null,
-  count: 0,
-  start: [],
-  end: []
-};
 const gameFunctions = {};
 let interval;
+
+
 
 $(document).ready(function(){
 
@@ -15,14 +11,26 @@ $(document).ready(function(){
     $.ajax({url: direct + 'joinGame'})
      .then(function(resp){
        if (resp.success) { //if there is room in the game for another player
+         let state = {
+           currentShip: null,
+           count: 0,
+           start: [],
+           end: []
+         };
+         localStorage.setItem(`player${resp.player}game${resp.game}`, JSON.stringify(state));
+         $("#playerId").text(resp.player);
+         $("#gameId").text(resp.game);
+         gameFunctions.playerId = () => parseInt($("#playerId").text());
+         gameFunctions.gameId = () => parseInt($("#gameId").text());
+
          //all hidden divs are shown
-         $("#player").text(resp.player);
-         gameFunctions.playerId = () => parseInt($("#player").text());
          $("#info").css("display", "flex");
          $("#joinGame").hide();
          $(".buttons").show();
          $("#board-container").show();
          $("#prompt").show().text("To place ships of 5 different lengths, click on a button below.");
+
+         //set board
          for (let i = 0; i < 10; i++){
            $("#playerBoard").append(`<div id="playerBoard${i}"><div class="label">${i}</div></div>`);
            $("#attackBoard").append(`<div id="attackBoard${i}"><div class="label">${i}</div></div>`);
@@ -43,9 +51,10 @@ $(document).ready(function(){
 
    //when user clicks EXIT button
    $("#leaveGame").click(function(){
-    $.ajax({url: direct + 'leaveGame'})
+    $.ajax({url: `${direct}leaveGame/${gameFunctions.gameId()}`})
     .then(function(resp){
       if (resp.success) {
+        localStorage.removeItem(`player${gameFunctions.playerId()}game${gameFunctions.gameId()}`);
         $("#prompt").text("You have left the game. Refresh page to start new game.");
         $("#info").hide();
         $(".buttons").hide();
@@ -58,6 +67,7 @@ $(document).ready(function(){
 //when user clicks on a ship button
   $(".ship-button").click(function (e) {
     $(this).addClass("selected");
+    state = JSON.parse(localStorage.getItem(`player${gameFunctions.playerId()}game${gameFunctions.gameId()}`));
     state.currentShip = this.id; //set current ship to button id
     $("#prompt").text(`Select a start and end for a ship of length ${state.currentShip.split("ship")[1]}!`)
   });
@@ -75,6 +85,9 @@ $(document).ready(function(){
         state.start = e.target.id.split("");
         $(e.target).addClass("ship").removeClass("water");
         state.count++;
+        //save to localstorage
+        localStorage.setItem(`player${gameFunctions.playerId()}game${gameFunctions.gameId()}`, JSON.stringify(state));
+
         if (state.shipLength == 1){
           gameFunctions.attemptSetShip(e.target);
         } else {
@@ -95,7 +108,7 @@ $(document).ready(function(){
       let _this = e.target;
     //verify move with backend
     $.ajax({
-        "url": direct + `move/${gameFunctions.playerId()}`,
+        "url": direct + `move/${gameFunctions.playerId()}/${gameFunctions.gameId()}`,
         method: 'POST',
         headers: {
           "content-type": "application/json",
@@ -124,10 +137,11 @@ $(document).ready(function(){
 // GAME FUNCTIONS
 
 gameFunctions.attemptSetShip = (_this) => {
+  state = JSON.parse(localStorage.getItem(`player${gameFunctions.playerId()}game${gameFunctions.gameId()}`));
   state.end = _this.id.split("");
   $(_this).addClass("ship").removeClass("water");
   $.ajax({
-    "url": direct + `setShip/${gameFunctions.playerId()}`,
+    "url": direct + `setShip/${gameFunctions.playerId()}/${gameFunctions.gameId()}`,
     method: 'POST',
     headers: {
       "content-type": "application/json",
@@ -135,6 +149,7 @@ gameFunctions.attemptSetShip = (_this) => {
     },
     data: JSON.stringify({ "shipLength": parseInt(state.shipLength), "start1": parseInt(state.start[1]), "start2": parseInt(state.start[2]), "end1": parseInt(state.end[1]), "end2": parseInt(state.end[2]) })
   }).done(function(resp){
+    localStorage.setItem(`player${gameFunctions.playerId()}game${gameFunctions.gameId()}`, JSON.stringify(state));
     if (resp.success) { // if ship placement is valid, fill in ship squares to colors
       gameFunctions.changeShipSquares();
     } else { // if ship placement is invalid, change squares back to water
@@ -146,6 +161,7 @@ gameFunctions.attemptSetShip = (_this) => {
     //reset ship state
     state.currentShip = null;
     state.count = 0;
+    localStorage.setItem(`player${gameFunctions.playerId()}game${gameFunctions.gameId()}`, JSON.stringify(state));
   })
   .catch(function(error){
     console.log(error);
@@ -153,7 +169,7 @@ gameFunctions.attemptSetShip = (_this) => {
 }
 
 gameFunctions.changeShipSquares = () => {
-  console.log(state);
+  state = JSON.parse(localStorage.getItem(`player${gameFunctions.playerId()}game${gameFunctions.gameId()}`));
   // if ship is horizontal
   if (state.start[1] === state.end[1]){
       let lesser = state.start[2] > state.end[2] ? state.end[2] : state.start[2];
@@ -169,12 +185,13 @@ gameFunctions.changeShipSquares = () => {
           $(`#p${i}${state.start[2]}`).addClass("ship").removeClass("water");
       }
   }
+  localStorage.setItem(`player${gameFunctions.playerId()}game${gameFunctions.gameId()}`, JSON.stringify(state));
   $("#prompt").text("Ship was placed!")
 }
 
   //polls backend for changes to player board state
 gameFunctions.getChanges = () => {
-  $.ajax({"url": direct + `getChanges/${gameFunctions.playerId()}`})
+  $.ajax({"url": direct + `getChanges/${gameFunctions.playerId()}/${gameFunctions.gameId()}`})
   .done(function(resp){
     if (resp.success){
       //if game is started
@@ -195,6 +212,7 @@ gameFunctions.getChanges = () => {
         if (resp.gameOver){
            $("#prompt").text(`Game is over. ${resp.winner === gameFunctions.playerId() ? "You won!" : "You lost!"}`);
            clearInterval(interval);
+           localStorage.removeItem(`player${gameFunctions.playerId()}game${gameFunctions.gameId()}`)
          }
       }
     }
